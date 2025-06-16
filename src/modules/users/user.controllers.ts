@@ -8,6 +8,7 @@ import {
   Post,
 } from '@nestjs/common';
 import { UserService } from './user.services';
+import { CreateUserDTO } from './domain/dto/createUser.dto';
 
 @Controller('users')
 export class UserController {
@@ -24,8 +25,8 @@ export class UserController {
   }
 
   @Post()
-  createUser(@Body() body: any) {
-    this.userService.create(body);
+  createUser(@Body() body: CreateUserDTO) {
+    return this.userService.create(body);
   }
 
   @Patch(':id')

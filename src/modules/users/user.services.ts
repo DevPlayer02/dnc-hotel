@@ -15,6 +15,27 @@ export class UserService {
   }
 
   async show(id: string) {
+    const user = await this.isIdExists(id);
+
+    return user;
+  }
+
+  async update(id: string, body: any) {
+    await this.isIdExists(id);
+
+    return await this.prisma.user.update({
+      where: { id: Number(id) },
+      data: body,
+    });
+  }
+
+  async delete(id: string) {
+    await this.isIdExists(id);
+
+    return await this.prisma.user.delete({ where: { id: Number(id) } });
+  }
+
+  private async isIdExists(id: string) {
     const user = await this.prisma.user.findUnique({
       where: { id: Number(id) },
     });
@@ -23,17 +44,6 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
 
-    return user;
-  }
-
-  async update(id: string, body: any) {
-    return await this.prisma.user.update({
-      where: { id: Number(id) },
-      data: body,
-    });
-  }
-
-  async delete(id: string) {
-    return await this.prisma.user.delete({ where: { id: Number(id) } });
+    return !!user;
   }
 }
