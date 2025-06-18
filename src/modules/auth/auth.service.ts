@@ -1,13 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { access } from 'fs';
 import { User } from 'generated/prisma';
+import { AuthLoginDTO } from './domain/dto/authLogin.dto';
+import { PrismaService } from '../prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prisma: PrismaService,
+  ) {}
 
-  generateJwtToken(user: User) {
+  async generateJwtToken(user: User) {
     const payload = { sub: user.id, name: user.name };
     const options = {
       expiresIn: '1d',
@@ -15,6 +20,18 @@ export class AuthService {
       audience: 'users',
     };
 
-    return { access_token: this.jwtService.sign(payload, options) };
+    return { access_token: await this.jwtService.signAsync(payload, options) };
+  }
+
+  async login({ email, password }: AuthLoginDTO) {
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user || (await bcrypt.compare(password, user.password))) {
+      throw new UnauthorizedException('Email or password is incorrect');
+    }
+
+    return this.generateJwtToken(user);
   }
 }
