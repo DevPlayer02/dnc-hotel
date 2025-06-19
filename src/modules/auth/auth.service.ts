@@ -8,6 +8,7 @@ import { UserService } from '../users/user.services';
 import { CreateUserDTO } from '../users/domain/dto/createUser.dto';
 import { AuthRegisterDTO } from './domain/dto/authRegister.dto';
 import { AuthResetPasswordDTO } from './domain/dto/authResetPassword.dto';
+import { JwtPayload, ValidateTokenDTO } from './domain/dto/validateToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,10 +18,10 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async generateJwtToken(user: User) {
+  async generateJwtToken(user: User, expiresIn: string = '1d') {
     const payload = { sub: user.id, name: user.name };
     const options = {
-      expiresIn: '1d',
+      expiresIn: expiresIn,
       issuer: 'dnc_hotel',
       audience: 'users',
     };
@@ -31,17 +32,7 @@ export class AuthService {
   async login({ email, password }: AuthLoginDTO) {
     const user = await this.userService.findByEmail(email);
 
-    if (!user) {
-      throw new UnauthorizedException('Email ou senha incorretos');
-    }
-
-    if (!password || !user.password) {
-      throw new UnauthorizedException('Credenciais incompletas');
-    }
-
-    const match = await bcrypt.compare(password, user.password);
-
-    if (!match) {
+    if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new UnauthorizedException('Email ou senha incorretos');
     }
 
@@ -61,27 +52,45 @@ export class AuthService {
     return this.generateJwtToken(user);
   }
 
-  async resetPassword({ token, password }: AuthResetPasswordDTO) {
-    type JwtPayload = {
-      sub: string;
-      name?: string;
-      iat?: number;
-      exp?: number;
-      aud?: string;
-      iss?: string;
-    };
-    const decoded: JwtPayload = await this.jwtService.verifyAsync<JwtPayload>(
-      token,
-      {
-        audience: 'users',
-        issuer: 'dnc_hotel',
-      },
-    );
+  async reset({ token, password }: AuthResetPasswordDTO) {
+    const { valid, decoded } = await this.validateToken(token);
+
+    if (!valid || typeof decoded === 'undefined') {
+      throw new UnauthorizedException('Invalid token');
+    }
 
     const user = await this.userService.update(Number(decoded.sub), {
       password,
     });
 
     return await this.generateJwtToken(user);
+  }
+
+  async forgot(email: string) {
+    const user = await this.userService.findByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Email is incorrect');
+    }
+
+    const token = this.generateJwtToken(user, '30m');
+
+    // Enviar o email com o token jwt para resetar a senha
+    return token;
+  }
+
+  private async validateToken(token: string): Promise<ValidateTokenDTO> {
+    try {
+      const decoded = await this.jwtService.verifyAsync<JwtPayload>(token, {
+        secret: process.env.JWT_SECRET,
+        issuer: 'dnc_hotel',
+        audience: 'users',
+      });
+
+      return { valid: true, decoded };
+    } catch (error) {
+      const err = error as Error;
+      return { valid: false, message: err.message };
+    }
   }
 }
