@@ -9,6 +9,8 @@ import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
 import { userSelectFields } from '../prisma/utils/userSelectFields';
+import { join, resolve } from 'path';
+import { stat, unlink } from 'fs/promises';
 
 @Injectable()
 export class UserService {
@@ -69,10 +71,47 @@ export class UserService {
         email: true,
         password: true,
         role: true,
+        avatar: true,
         createdAt: true,
         updatedAt: true,
       },
     });
+  }
+
+  async uploadAvatar(id: number, avatarFileName: string) {
+    const user = await this.isIdExists(id);
+    const oldAvatar = user.avatar;
+
+    const directory = resolve(__dirname, '..', '..', '..', 'uploads');
+
+    const newFilePath = join(directory, avatarFileName);
+
+    let updatedUser;
+
+    try {
+      updatedUser = await this.update(id, { avatar: avatarFileName });
+    } catch (error) {
+      try {
+        await unlink(newFilePath);
+      } catch {
+        // ignora se não existir ou outro erro
+      }
+      throw error;
+    }
+
+    if (oldAvatar) {
+      const oldFilePath = join(directory, oldAvatar);
+      try {
+        await stat(oldFilePath);
+        await unlink(oldFilePath);
+      } catch {
+        // ignora se não existir ou erro; não interrompe o fluxo
+      }
+    }
+
+    const userUpdated = await this.update(id, { avatar: avatarFileName });
+
+    return userUpdated;
   }
 
   private async isIdExists(id: number) {
