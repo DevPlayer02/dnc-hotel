@@ -21,6 +21,7 @@ import { RoleGuard } from 'src/shared/guards/role.guard';
 import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadPipe } from 'src/shared/pipes/fileValidation.pipe';
 
 @UseGuards(AuthGuard, RoleGuard, ThrottlerGuard)
 @Controller('users')
@@ -61,7 +62,8 @@ export class UserController {
   @Post('avatar')
   uploadAvatar(
     @User('id') id: number,
-    @UploadedFile() avatar: Express.Multer.File,
+    @UploadedFile(new FileUploadPipe())
+    avatar: Express.Multer.File,
   ) {
     return this.userService.uploadAvatar(id, avatar.filename);
   }
