@@ -20,6 +20,7 @@ model User {
   password  String
   role      Role      @default(USER)
   avatar    String?
+  hotels    Hotel[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
@@ -33,6 +34,8 @@ model Hotel {
   address     String
   image       String?
   price       Float
+  ownerId     Int
+  owner       User     @relation(fields: [ownerId], references: [id])
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
