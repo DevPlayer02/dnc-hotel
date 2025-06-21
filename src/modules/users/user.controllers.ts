@@ -5,7 +5,9 @@ import {
   Get,
   Patch,
   Post,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.services';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
@@ -18,6 +20,7 @@ import { Roles } from 'src/shared/decorators/roles.decorators';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';
 import { ThrottlerGuard } from '@nestjs/throttler';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @UseGuards(AuthGuard, RoleGuard, ThrottlerGuard)
 @Controller('users')
@@ -52,5 +55,14 @@ export class UserController {
   @Delete(':id')
   deleteUser(@ParamId() id: number) {
     return this.userService.delete(id);
+  }
+
+  @UseInterceptors(FileInterceptor('avatar'))
+  @Post('avatar')
+  uploadAvatar(
+    @User('id') id: number,
+    @UploadedFile() avatar: Express.Multer.File,
+  ) {
+    return this.userService.uploadAvatar(id, avatar.filename);
   }
 }
