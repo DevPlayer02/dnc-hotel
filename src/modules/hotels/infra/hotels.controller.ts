@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Delete,
-  Param,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -24,6 +23,7 @@ import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Role } from 'generated/prisma';
 import { Roles } from 'src/shared/decorators/roles.decorators';
 import { OwnerHotelGuard } from 'src/shared/guards/ownerHotel.guard';
+import { User } from 'src/shared/decorators/user.decorator';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -53,7 +53,6 @@ export class HotelsController {
   @Roles(Role.ADMIN, Role.USER)
   @Get(':id')
   findOne(@ParamId() id: number) {
-    console.log('findOne', id);
     return this.findOneHotelService.execute(id);
   }
 
@@ -64,9 +63,9 @@ export class HotelsController {
   }
 
   @Roles(Role.ADMIN)
-  @Get(':ownerId')
-  findOwner(@Param('ownerId') ownerId: string) {
-    return this.findByOwnerHotelsService.execute(ownerId);
+  @Get(':owner')
+  findOwner(@User('id') id: number) {
+    return this.findByOwnerHotelsService.execute(id);
   }
 
   @UseGuards(OwnerHotelGuard)
