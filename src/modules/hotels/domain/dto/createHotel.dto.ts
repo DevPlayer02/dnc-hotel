@@ -32,6 +32,6 @@ export class CreateHotelDto {
   address: string;
 
   @IsNumber()
-  @IsNotEmpty()
+  @IsOptional()
   ownerId: number;
 }

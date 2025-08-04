@@ -40,32 +40,35 @@ export class HotelsController {
 
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() createHotelDto: CreateHotelDto) {
-    return this.createHotelsService.execute(createHotelDto);
+  create(@User('id') id: number, @Body() createHotelDto: CreateHotelDto) {
+    return this.createHotelsService.execute(createHotelDto, id);
   }
 
   @Roles(Role.ADMIN, Role.USER)
   @Get()
-  findAll() {
-    return this.findAllHotelsService.execute();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return this.findAllHotelsService.execute(Number(page), Number(limit));
+  }
+
+  @Roles(Role.ADMIN, Role.USER)
+  @Get('search')
+  findName(@Query('name') name: string) {
+    return this.findByNameHotelsService.execute(name);
+  }
+
+  @Roles(Role.ADMIN)
+  @Get('owner')
+  findOwner(@User('id') id: number) {
+    return this.findByOwnerHotelsService.execute(id);
   }
 
   @Roles(Role.ADMIN, Role.USER)
   @Get(':id')
   findOne(@ParamId() id: number) {
     return this.findOneHotelService.execute(id);
-  }
-
-  @Roles(Role.ADMIN, Role.USER)
-  @Get(':name')
-  findName(@Query('name') name: string) {
-    return this.findByNameHotelsService.execute(name);
-  }
-
-  @Roles(Role.ADMIN)
-  @Get(':owner')
-  findOwner(@User('id') id: number) {
-    return this.findByOwnerHotelsService.execute(id);
   }
 
   @UseGuards(OwnerHotelGuard)
