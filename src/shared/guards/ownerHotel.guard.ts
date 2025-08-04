@@ -1,5 +1,4 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { Observable } from 'rxjs';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { FindOneHotelService } from 'src/modules/hotels/services/findOneHotel.service';
 

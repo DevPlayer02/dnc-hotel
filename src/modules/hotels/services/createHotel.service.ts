@@ -10,7 +10,7 @@ export class CreateHotelsService {
     private readonly hotelRepository: IHotelRepository,
   ) {}
 
-  async execute(createHotelDto: CreateHotelDto) {
-    return await this.hotelRepository.createHotel(createHotelDto);
+  async execute(createHotelDto: CreateHotelDto, id: number) {
+    return await this.hotelRepository.createHotel(createHotelDto, id);
   }
 }

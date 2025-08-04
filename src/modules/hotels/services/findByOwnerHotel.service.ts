@@ -8,7 +8,7 @@ export class FindByOwnerHotelsService {
     @Inject(HOTEL_REPOSITORY_TOKEN)
     private readonly hotelRepository: IHotelRepository,
   ) {}
-  async execute(ownerId: string) {
-    return await this.hotelRepository.findHotelsByOwner(Number(ownerId));
+  async execute(id: number) {
+    return await this.hotelRepository.findHotelsByOwner(id);
   }
 }

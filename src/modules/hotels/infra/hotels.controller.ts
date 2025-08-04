@@ -5,7 +5,6 @@ import {
   Body,
   Patch,
   Delete,
-  Param,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -24,6 +23,7 @@ import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Role } from 'generated/prisma';
 import { Roles } from 'src/shared/decorators/roles.decorators';
 import { OwnerHotelGuard } from 'src/shared/guards/ownerHotel.guard';
+import { User } from 'src/shared/decorators/user.decorator';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -40,33 +40,35 @@ export class HotelsController {
 
   @Roles(Role.ADMIN)
   @Post()
-  create(@Body() createHotelDto: CreateHotelDto) {
-    return this.createHotelsService.execute(createHotelDto);
+  create(@User('id') id: number, @Body() createHotelDto: CreateHotelDto) {
+    return this.createHotelsService.execute(createHotelDto, id);
   }
 
   @Roles(Role.ADMIN, Role.USER)
   @Get()
-  findAll() {
-    return this.findAllHotelsService.execute();
+  findAll(
+    @Query('page') page: string = '1',
+    @Query('limit') limit: string = '10',
+  ) {
+    return this.findAllHotelsService.execute(Number(page), Number(limit));
   }
 
   @Roles(Role.ADMIN, Role.USER)
-  @Get(':id')
-  findOne(@ParamId() id: number) {
-    console.log('findOne', id);
-    return this.findOneHotelService.execute(id);
-  }
-
-  @Roles(Role.ADMIN, Role.USER)
-  @Get(':name')
+  @Get('search')
   findName(@Query('name') name: string) {
     return this.findByNameHotelsService.execute(name);
   }
 
   @Roles(Role.ADMIN)
-  @Get(':ownerId')
-  findOwner(@Param('ownerId') ownerId: string) {
-    return this.findByOwnerHotelsService.execute(ownerId);
+  @Get('owner')
+  findOwner(@User('id') id: number) {
+    return this.findByOwnerHotelsService.execute(id);
+  }
+
+  @Roles(Role.ADMIN, Role.USER)
+  @Get(':id')
+  findOne(@ParamId() id: number) {
+    return this.findOneHotelService.execute(id);
   }
 
   @UseGuards(OwnerHotelGuard)

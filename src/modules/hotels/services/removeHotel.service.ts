@@ -8,7 +8,7 @@ export class RemoveHotelService {
     @Inject(HOTEL_REPOSITORY_TOKEN)
     private readonly hotelRepository: IHotelRepository,
   ) {}
-  execute(id: number) {
-    return `This action removes a #${id} hotel`;
+  async execute(id: number) {
+    return await this.hotelRepository.deleteHotel(id);
   }
 }
