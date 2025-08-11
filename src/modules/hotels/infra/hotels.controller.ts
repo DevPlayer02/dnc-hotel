@@ -7,6 +7,9 @@ import {
   Delete,
   Query,
   UseGuards,
+  Param,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { CreateHotelsService } from '../services/createHotel.service';
 import { FindAllHotelsService } from '../services/findAllHotel.service';
@@ -24,6 +27,9 @@ import { Role } from 'generated/prisma';
 import { Roles } from 'src/shared/decorators/roles.decorators';
 import { OwnerHotelGuard } from 'src/shared/guards/ownerHotel.guard';
 import { User } from 'src/shared/decorators/user.decorator';
+import { UploadHotelImageService } from '../services/uploadHotelImage.service';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileUploadPipe } from 'src/shared/pipes/fileValidation.pipe';
 
 @UseGuards(AuthGuard, RoleGuard)
 @Controller('hotels')
@@ -36,6 +42,7 @@ export class HotelsController {
     private readonly findByOwnerHotelsService: FindByOwnerHotelsService,
     private readonly updateHotelService: UpdateHotelService,
     private readonly removeHotelService: RemoveHotelService,
+    private readonly uploadHotelImageService: UploadHotelImageService,
   ) {}
 
   @Roles(Role.ADMIN)
@@ -69,6 +76,16 @@ export class HotelsController {
   @Get(':id')
   findOne(@ParamId() id: number) {
     return this.findOneHotelService.execute(id);
+  }
+
+  @UseInterceptors(FileInterceptor('image'))
+  @Patch('image/:hotelId')
+  uploadImage(
+    @Param('hotelId') id: string,
+    @UploadedFile(new FileUploadPipe())
+    image: Express.Multer.File,
+  ) {
+    return this.uploadHotelImageService.execute(id, image.filename);
   }
 
   @UseGuards(OwnerHotelGuard)
