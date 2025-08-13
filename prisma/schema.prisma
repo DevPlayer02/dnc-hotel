@@ -15,7 +15,7 @@ enum Role {
 
 enum ReservationStatus {
   PENDING
-  APROVED
+  APPROVED
   CANCELLED
 }
 
