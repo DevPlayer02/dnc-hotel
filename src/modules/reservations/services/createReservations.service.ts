@@ -12,8 +12,6 @@ import { IHotelRepository } from 'src/modules/hotels/domain/repositories/IHotel.
 import { ReservationStatus } from 'generated/prisma';
 import { HOTEL_REPOSITORY_TOKEN } from 'src/modules/hotels/utils/repositoriesTokens';
 
-console.log('HOTEL_REPOSITORY_TOKEN ->', HOTEL_REPOSITORY_TOKEN);
-
 @Injectable()
 export class CreateReservationsService {
   constructor(
@@ -23,7 +21,7 @@ export class CreateReservationsService {
     private readonly hotelsRepository: IHotelRepository,
   ) {}
 
-  async create(id: number, data: CreateReservationDto) {
+  async execute(id: number, data: CreateReservationDto) {
     const checkInDate = parseISO(data.checkIn);
     const checkOutDate = parseISO(data.checkOut);
     const daysOfStay = differenceInDays(checkInDate, checkOutDate);

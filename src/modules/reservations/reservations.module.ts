@@ -9,14 +9,18 @@ import { REPOSITORY_TOKEN_RESERVATION } from './utils/repositoriesTokens';
 import { ReservationRepositories } from './infra/reservations.repository';
 import { HotelsRepositories } from '../hotels/infra/hotels.repository';
 import { HOTEL_REPOSITORY_TOKEN } from '../hotels/utils/repositoriesTokens';
-
-console.log('HOTEL_REPOSITORY_TOKEN ->', HOTEL_REPOSITORY_TOKEN);
+import { FindAllReservationsService } from './services/findAllReservation.service';
+import { FindByIdReservationsService } from './services/findByIdReservation.service copy';
+import { FindByUserReservationsService } from './services/findByUserReservation.service copy 2';
 
 @Module({
   imports: [PrismaModule, AuthModule, UserModule, HotelsModule],
   controllers: [ReservationsController],
   providers: [
     CreateReservationsService,
+    FindAllReservationsService,
+    FindByIdReservationsService,
+    FindByUserReservationsService,
     {
       provide: REPOSITORY_TOKEN_RESERVATION,
       useClass: ReservationRepositories,
