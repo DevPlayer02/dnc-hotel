@@ -10,4 +10,14 @@ export class ReservationRepositories implements IReservationRepository {
   create(data: any): Promise<Reservation> {
     return this.prisma.reservation.create({ data });
   }
+
+  findbyId(id: number): Promise<Reservation | null> {
+    return this.prisma.reservation.findUnique({ where: { id } });
+  }
+  findAll(): Promise<Reservation[]> {
+    throw new Error('Method not implemented.');
+  }
+  findByUser(userId: number): Promise<Reservation[]> {
+    return this.prisma.reservation.findMany({ where: { userId } });
+  }
 }
