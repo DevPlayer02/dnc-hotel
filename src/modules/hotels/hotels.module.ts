@@ -17,6 +17,11 @@ import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
 import { UploadHotelImageService } from './services/uploadHotelImage.service';
 
+console.log(
+  'HOTEL_REPOSITORY_TOKEN (hotels.module) ->',
+  HOTEL_REPOSITORY_TOKEN,
+);
+
 @Module({
   imports: [
     PrismaModule,
@@ -42,6 +47,12 @@ import { UploadHotelImageService } from './services/uploadHotelImage.service';
     RemoveHotelService,
     UpdateHotelService,
     UploadHotelImageService,
+    {
+      provide: HOTEL_REPOSITORY_TOKEN,
+      useClass: HotelsRepositories,
+    },
+  ],
+  exports: [
     {
       provide: HOTEL_REPOSITORY_TOKEN,
       useClass: HotelsRepositories,

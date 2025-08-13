@@ -13,31 +13,55 @@ enum Role {
   USER
 }
 
+enum ReservationStatus {
+  PENDING
+  APROVED
+  CANCELLED
+}
+
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String 
-  email     String    @unique
-  password  String
-  role      Role      @default(USER)
-  avatar    String?
-  hotels    Hotel[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id            Int           @id @default(autoincrement())
+  name          String 
+  email         String        @unique
+  password      String
+  role          Role          @default(USER)
+  avatar        String?
+  hotels        Hotel[]
+  reservations  Reservation[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@map("users")
 }
 
 model Hotel {
-  id          Int      @id @default(autoincrement())
-  name        String
-  description String
-  address     String
-  image       String?
-  price       Float
-  ownerId     Int
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id            Int      @id @default(autoincrement())
+  name          String
+  description   String
+  address       String
+  image         String?
+  price         Float
+  ownerId       Int
+  reservations  Reservation[]
+  owner         User     @relation(fields: [ownerId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   @@map("hotels")
+}
+
+model Reservation {
+  id          Int                 @id @default(autoincrement())
+  userId      Int
+  user        User                @relation(fields: [userId], references: [id])
+  hotelId     Int
+  hotel       Hotel               @relation(fields: [hotelId], references: [id])
+  checkIn     DateTime
+  checkOut    DateTime
+  total       Float
+  status      ReservationStatus   @default(PENDING)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@map("reservations")
 }
