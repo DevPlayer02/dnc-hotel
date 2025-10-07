@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { User } from 'generated/prisma';
+import { User } from '@prisma/client';
 import { CreateUserDTO } from './domain/dto/createUser.dto';
 import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import * as bcrypt from 'bcrypt';
@@ -87,14 +87,13 @@ export class UserService {
     const newFilePath = join(directory, avatarFileName);
 
     let updatedUser;
-
     try {
       updatedUser = await this.update(id, { avatar: avatarFileName });
     } catch (error) {
       try {
         await unlink(newFilePath);
       } catch {
-        // ignora se não existir ou outro erro
+        throw error;
       }
       throw error;
     }
@@ -105,7 +104,7 @@ export class UserService {
         await stat(oldFilePath);
         await unlink(oldFilePath);
       } catch {
-        // ignora se não existir ou erro; não interrompe o fluxo
+        throw new NotFoundException('Old avatar not found');
       }
     }
 

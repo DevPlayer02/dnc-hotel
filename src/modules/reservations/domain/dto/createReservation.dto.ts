@@ -6,7 +6,7 @@ import {
   IsString,
 } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { ReservationStatus } from 'generated/prisma';
+import { ReservationStatus } from '@prisma/client';
 
 export class CreateReservationDto {
   @IsNumber()

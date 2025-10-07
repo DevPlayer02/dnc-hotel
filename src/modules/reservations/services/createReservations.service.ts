@@ -9,7 +9,7 @@ import { REPOSITORY_TOKEN_RESERVATION } from '../utils/repositoriesTokens';
 import { IReservationRepository } from '../domain/repositories/IReservations.repositories';
 import { differenceInDays, parseISO } from 'date-fns';
 import { IHotelRepository } from 'src/modules/hotels/domain/repositories/IHotel.repositories';
-import { ReservationStatus } from 'generated/prisma';
+import { ReservationStatus } from '@prisma/client';
 import { HOTEL_REPOSITORY_TOKEN } from 'src/modules/hotels/utils/repositoriesTokens';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserService } from 'src/modules/users/user.services';

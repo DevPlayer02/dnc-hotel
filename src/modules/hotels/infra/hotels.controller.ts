@@ -23,7 +23,7 @@ import { FindByNameHotelsService } from '../services/findByNameHotel.service';
 import { FindByOwnerHotelsService } from '../services/findByOwnerHotel.service';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { RoleGuard } from 'src/shared/guards/role.guard';
-import { Role } from 'generated/prisma';
+import { Role } from '@prisma/client';
 import { Roles } from 'src/shared/decorators/roles.decorators';
 import { OwnerHotelGuard } from 'src/shared/guards/ownerHotel.guard';
 import { User } from 'src/shared/decorators/user.decorator';

@@ -15,7 +15,7 @@ import { UpdateUserDTO } from './domain/dto/updateUser.dto';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { User } from 'src/shared/decorators/user.decorator';
-import { Role, User as UserType } from 'generated/prisma';
+import { Role, User as UserType } from '@prisma/client';
 import { Roles } from 'src/shared/decorators/roles.decorators';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { UserMatchGuard } from 'src/shared/guards/userMatch.guard';

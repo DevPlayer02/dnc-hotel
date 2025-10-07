@@ -17,11 +17,18 @@ export class FileUploadPipe implements PipeTransform<Express.Multer.File> {
       );
     }
 
-    let buffer: Buffer;
-    try {
-      buffer = await fs.readFile(file.path);
-    } catch {
-      throw new BadRequestException('Failed to read file for validation.');
+    let buffer: Buffer | null = null;
+
+    if (file.buffer) {
+      buffer = file.buffer;
+    } else if (file.path) {
+      try {
+        buffer = await fs.readFile(file.path);
+      } catch {
+        throw new BadRequestException('Failed to read file for validation.');
+      }
+    } else {
+      throw new BadRequestException('No valid file data.');
     }
 
     const type = await fileTypeFromBuffer(buffer);

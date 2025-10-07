@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IHotelRepository } from '../domain/repositories/IHotel.repositories';
 import { FindAllHotelsService } from './findAllHotel.service';
 import { HOTEL_REPOSITORY_TOKEN } from '../utils/repositoriesTokens';
-import { Hotel } from 'generated/prisma';
+import { Hotel } from '@prisma/client';
 import { REDIS_HOTEL_KEY } from '../utils/redisKey';
 
 let service: FindAllHotelsService;
