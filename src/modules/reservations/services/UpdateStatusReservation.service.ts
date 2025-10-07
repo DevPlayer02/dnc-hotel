@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { REPOSITORY_TOKEN_RESERVATION } from '../utils/repositoriesTokens';
 import { IReservationRepository } from '../domain/repositories/IReservations.repositories';
-import { ReservationStatus } from 'generated/prisma';
+import { ReservationStatus } from '@prisma/client';
 import { MailerService } from '@nestjs-modules/mailer';
 import { UserService } from 'src/modules/users/user.services';
 

@@ -1,4 +1,4 @@
-import { Reservation, ReservationStatus } from 'generated/prisma';
+import { Reservation, ReservationStatus } from '@prisma/client';
 import { CreateReservationDto } from '../dto/createReservation.dto';
 
 export interface IReservationRepository {

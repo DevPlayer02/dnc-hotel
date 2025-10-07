@@ -1,4 +1,4 @@
-import { Hotel } from 'generated/prisma';
+import { Hotel } from '@prisma/client';
 import { CreateHotelDto } from '../domain/dto/createHotel.dto';
 import { IHotelRepository } from '../domain/repositories/IHotel.repositories';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
@@ -15,18 +15,35 @@ export class HotelsRepositories implements IHotelRepository {
   }
 
   findHotelById(id: number): Promise<Hotel | null> {
-    return this.prisma.hotel.findUnique({
-      where: { id: Number(id) },
-      include: { owner: true },
-    });
+    return this.prisma.hotel
+      .findUnique({
+        where: { id: Number(id) },
+        include: { owner: true },
+      })
+      .then((hotel) => {
+        if (hotel && hotel.owner && hotel.owner.avatar) {
+          hotel.owner.avatar = `${process.env.APP_API_URL}/uploads/${hotel.owner.avatar}`;
+        }
+        return hotel;
+      });
   }
 
   findHotels(offSet: number, limit: number): Promise<Hotel[]> {
-    return this.prisma.hotel.findMany({
-      take: limit,
-      skip: offSet,
-      include: { owner: true },
-    });
+    return this.prisma.hotel
+      .findMany({
+        take: limit,
+        skip: offSet,
+        include: { owner: true },
+      })
+      .then((hotels) => {
+        hotels.forEach((hotel) => {
+          if (hotel.owner.avatar) {
+            hotel.owner.avatar = `${process.env.APP_API_URL}/uploads/${hotel.owner.avatar}`;
+          }
+        });
+
+        return hotels;
+      });
   }
 
   countHotels(): Promise<number> {

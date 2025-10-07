@@ -7,7 +7,7 @@ import { FindAllReservationsService } from '../services/findAllReservation.servi
 import { FindByIdReservationsService } from '../services/findByIdReservation.service';
 import { ParamId } from 'src/shared/decorators/paramId.decorator';
 import { FindByUserReservationsService } from '../services/findByUserReservation.service';
-import { ReservationStatus, Role } from 'generated/prisma';
+import { ReservationStatus, Role } from '@prisma/client';
 import { updateStatusReservationsService } from '../services/UpdateStatusReservation.service';
 import { RoleGuard } from 'src/shared/guards/role.guard';
 import { Roles } from 'src/shared/decorators/roles.decorators';
