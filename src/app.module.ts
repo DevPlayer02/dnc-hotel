@@ -16,7 +16,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     ThrottlerModule.forRoot([
       {
         ttl: 5000,
-        limit: 5,
+        limit: 10,
       },
     ]),
     MailerModule.forRoot({
