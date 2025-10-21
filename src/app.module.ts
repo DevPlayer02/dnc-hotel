@@ -29,7 +29,7 @@ import { RedisModule } from '@nestjs-modules/ioredis';
     ReservationsModule,
     RedisModule.forRoot({
       type: 'single',
-      url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+      url: `${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
     }),
   ],
   providers: [
