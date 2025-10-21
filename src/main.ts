@@ -19,6 +19,17 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
   //app.useGlobalInterceptors(new LoggingInterceptor());
-  await app.listen(process.env.PORT ?? 3000);
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port, '0.0.0.0');
+  console.log(
+    `Nest listening on 0.0.0.0:${port} (ENV PORT=${process.env.PORT})`,
+  );
+
+  process.on('uncaughtException', (err) =>
+    console.error('uncaughtException', err),
+  );
+  process.on('unhandledRejection', (err) =>
+    console.error('unhandledRejection', err),
+  );
 }
 bootstrap();
