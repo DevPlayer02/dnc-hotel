@@ -25,5 +25,5 @@ export class CreateUserDTO {
   role: Role;
 
   @IsOptional()
-  avatar?: string;
+  avatar?: string | null;
 }
