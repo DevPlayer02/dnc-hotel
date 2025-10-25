@@ -17,7 +17,7 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(body: CreateUserDTO): Promise<User> {
-    if (body.email) {
+    if (!body.email || body.email == undefined) {
       throw new BadRequestException('Email is required');
     }
 
@@ -67,10 +67,6 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
-    if (!email) {
-      throw new BadRequestException('Email is required to find user');
-    }
-
     return await this.prisma.user.findUnique({
       where: { email },
       select: {

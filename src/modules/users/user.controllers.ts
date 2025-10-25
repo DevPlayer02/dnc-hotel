@@ -42,6 +42,8 @@ export class UserController {
   @Roles(Role.ADMIN)
   @Post()
   createUser(@Body() body: CreateUserDTO) {
+    console.log('>>> raw body (req.body):', body);
+    console.log('>>> typeof email:', typeof body?.email, 'value:', body?.email);
     return this.userService.create(body);
   }
 
