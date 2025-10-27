@@ -3,22 +3,52 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
+import * as fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+
   app.enableCors({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     methods: 'GET,PATCH,POST,DELETE',
   });
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  app.useStaticAssets(join(__dirname, '..', 'uploads-hotel'), {
-    prefix: '/uploads-hotel/',
+
+  const uploadsHotelPath = join(process.cwd(), 'uploads-hotel');
+  const uploadsPath = join(process.cwd(), 'uploads');
+
+  console.log(
+    'Static uploads-hotel path:',
+    uploadsHotelPath,
+    'exists?',
+    fs.existsSync(uploadsHotelPath),
+  );
+
+  console.log(
+    'Static uploads path:',
+    uploadsPath,
+    'exists?',
+    fs.existsSync(uploadsPath),
+  );
+  if (fs.existsSync(uploadsPath)) {
+    try {
+      console.log(
+        'uploads sample files:',
+        fs.readdirSync(uploadsPath).slice(0, 10),
+      );
+    } catch (err) {
+      console.error('error reading uploads dir:', err);
+    }
+  }
+
+  app.useStaticAssets(uploadsHotelPath, {
+    prefix: '/uploads-hotel',
   });
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
+
+  app.useStaticAssets(uploadsPath, {
+    prefix: '/uploads',
   });
-  //app.useGlobalInterceptors(new LoggingInterceptor());
+
   const port = Number(process.env.PORT) || 3000;
   await app.listen(port, '0.0.0.0');
   console.log(
@@ -32,4 +62,5 @@ async function bootstrap() {
     console.error('unhandledRejection', err),
   );
 }
+
 bootstrap();
