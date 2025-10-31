@@ -17,30 +17,6 @@ async function bootstrap() {
   const uploadsHotelPath = join(process.cwd(), 'uploads-hotel');
   const uploadsPath = join(process.cwd(), 'uploads');
 
-  console.log(
-    'Static uploads-hotel path:',
-    uploadsHotelPath,
-    'exists?',
-    fs.existsSync(uploadsHotelPath),
-  );
-
-  console.log(
-    'Static uploads path:',
-    uploadsPath,
-    'exists?',
-    fs.existsSync(uploadsPath),
-  );
-  if (fs.existsSync(uploadsPath)) {
-    try {
-      console.log(
-        'uploads sample files:',
-        fs.readdirSync(uploadsPath).slice(0, 10),
-      );
-    } catch (err) {
-      console.error('error reading uploads dir:', err);
-    }
-  }
-
   app.useStaticAssets(uploadsHotelPath, {
     prefix: '/uploads-hotel',
   });
